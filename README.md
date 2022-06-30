@@ -1,4 +1,4 @@
-# CK3 Language Editor (ck3-language-editor)
+# Klekit
 
 Editor for Language
 
