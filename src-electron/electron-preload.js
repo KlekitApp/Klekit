@@ -111,7 +111,9 @@ contextBridge.exposeInMainWorld('api', {
                     key,
                     line: line+startIndex+1,
                     value,
-                    version
+                    meta: {
+                        version,
+                    }
                 })
             }
         });
@@ -133,7 +135,7 @@ contextBridge.exposeInMainWorld('api', {
             } else if (preparedStructure[i].length === 1 && preparedStructure[i][0].isComment) {
                 result[i] = preparedStructure[i][0].text;
             } else {
-                result[i] = ' '+preparedStructure[i][0].key+':'+preparedStructure[i][0].version+' '+preparedStructure[i][0].value;
+                result[i] = ' '+preparedStructure[i][0].key+':'+(preparedStructure[i][0].meta?.version || 0)+' '+preparedStructure[i][0].value;
             }
         }
         result = result.join('\n');
