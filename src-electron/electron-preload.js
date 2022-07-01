@@ -20,25 +20,29 @@ import fs from 'fs';
 import path from 'path';
 
 contextBridge.exposeInMainWorld('api', {
-    getAllFileNamesSync: function getAllFileNamesSync(dir) {
-        let files = fs.readdirSync(dir);
-        let result = [];
-        files.forEach(file => {
-            if (fs.statSync(path.join(dir, file)).isDirectory()) {
-                result = result.concat(getAllFileNamesSync(path.join(dir, file)));
-            } else {
-                if (file.includes('.yml')) {
-                    result.push(path.join(dir, file));
+    getAllFileNamesSync(pathToApp) {
+        let baseDir = path.join(pathToApp, '/game/localization/english');
+        function scanFiles(dir) {
+            let files = fs.readdirSync(dir);
+            let result = [];
+            files.forEach(file => {
+                if (fs.statSync(path.join(dir, file)).isDirectory()) {
+                    result = result.concat(scanFiles(path.join(dir, file)));
+                } else {
+                    if (file.includes('.yml')) {
+                        result.push(path.join(dir, file).replace(baseDir, '').replace('_l_english.yml', ''));
+                    }
                 }
-            }
+            });
+            return result;
         }
-        );
-        return result;
+        return scanFiles(baseDir);
     },
-    parseFile(file) {
+    parseFile(pathToApp, name, language) {
+        let pathToFile = path.join(pathToApp, '/game/localization/' + language + '/' + name + '_l_' + language + '.yml');
         let str;
         try {
-            str = fs.readFileSync(file, 'utf8');
+            str = fs.readFileSync(pathToFile, 'utf8');
         } catch (error) {
             return {
                 data: [],
@@ -58,7 +62,6 @@ contextBridge.exposeInMainWorld('api', {
             };
         }
         let comments = strArray.slice(0, startIndex);
-        let language = strArray[startIndex].trim().replace(':', '').replace('l_', '');
         strArray = strArray.slice(startIndex+1);
         let result = {
             data: [],
@@ -116,7 +119,7 @@ contextBridge.exposeInMainWorld('api', {
         return result;
     },
     
-    stringifyStructure(structure, file) {
+    stringifyStructure(structure, pathToApp, name, language) {
         let result = [];
         let preparedStructure = {
             ..._.groupBy(structure.comments, 'line'),
@@ -134,8 +137,8 @@ contextBridge.exposeInMainWorld('api', {
             }
         }
         result = result.join('\n');
-        if (file) {
-            fs.writeFileSync(result, str);
+        if (pathToApp && name && language) {
+            fs.writeFileSync(path.join(pathToApp, '/game/localization/' + language + '/' + name + '_l_' + language + '.yml'), str);
         }
         return result;
     }

@@ -1,36 +1,47 @@
 <template>
     <q-dialog v-model="isDialogOpen" persistent>
       <q-card style="min-width: 350px">
+
         <q-card-section>
-          <div class="text-h6">Translate Language</div>
+          <div class="text-h6">Settings</div>
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-          <q-input dense v-model="language" autofocus @keyup.enter="save" />
-        </q-card-section>
-
-        <q-card-section>
-          <div class="text-h6">Help Language</div>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          <q-input dense v-model="helpLanguage" @keyup.enter="save" />
-        </q-card-section>
-
-        <q-card-section>
-          <div class="text-h6">Path To Game</div>
+          <q-input
+            label="Translate Language"
+            v-model="language"
+            autofocus
+            @keyup.enter="save"
+          />
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-          <q-input dense v-model="pathToGame" @keyup.enter="save" />
-        </q-card-section>
-
-        <q-card-section>
-          <div class="text-h6">Google Trandlate Code</div>
+          <q-select
+            label="Help Languages"
+            v-model="helpLanguages"
+            use-input
+            use-chips
+            multiple
+            hide-dropdown-icon
+            input-debounce="0"
+            new-value-mode="add-unique"
+          />
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-          <q-input dense v-model="googleTranslateCode" @keyup.enter="save" />
+          <q-input
+            label="Path To Game"
+            v-model="pathToApp"
+            @keyup.enter="save"
+          />
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input
+            label="Google Translate Language Code"
+            v-model="googleTranslateCode"
+            @keyup.enter="save"
+          />
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
@@ -47,7 +58,7 @@ import { useSettingsStore } from 'src/stores/settings'
 export default {
     name: 'SettingsDialog',
     computed: {
-      ...mapWritableState(useSettingsStore, ['language', 'helpLanguage', 'pathToGame', 'googleTranslateCode', 'isDialogOpen']),
+      ...mapWritableState(useSettingsStore, ['language', 'helpLanguages', 'pathToApp', 'googleTranslateCode', 'isDialogOpen']),
     },
     methods: {
       ...mapActions(useSettingsStore, ['save']),

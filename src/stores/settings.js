@@ -3,19 +3,19 @@ import { useStructureStore } from './structure';
 
 export const useSettingsStore = defineStore('settings', {
   state: () => ({
-    helpLanguage: localStorage.getItem('helpLanguage') || 'english',
+    helpLanguages: JSON.parse(localStorage.getItem('helpLanguages') || '[]'),
     language: localStorage.getItem('language') || 'ukrainian',
     googleTranslateCode: localStorage.getItem('googleTranslateCode') || '',
-    pathToGame: localStorage.getItem('pathToGame') || '',
+    pathToApp: localStorage.getItem('pathToApp') || '',
     isDialogOpen: false,
   }),
   actions: {
     save() {
       const structureStore = useStructureStore();
-      localStorage.setItem('helpLanguage', this.helpLanguage);
+      localStorage.setItem('helpLanguages', JSON.stringify(this.helpLanguages));
       localStorage.setItem('language', this.language);
       localStorage.setItem('googleTranslateCode', this.googleTranslateCode);
-      localStorage.setItem('pathToGame', this.pathToGame);
+      localStorage.setItem('pathToApp', this.pathToApp);
       structureStore.fetch();
       this.isDialogOpen = false;
     }

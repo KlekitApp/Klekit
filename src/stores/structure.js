@@ -36,7 +36,7 @@ export const useStructureStore = defineStore('structure', {
                 let total = 0;
                 Object.keys(state.dataByFile[file]).forEach(key => {
                     total++;
-                    if (state.dataByFile[file][key][settingsStore.language]) {
+                    if (state.dataByFile[file][key][settingsStore.language]?.value) {
                         translated++;
                     }
                 }
@@ -57,34 +57,45 @@ export const useStructureStore = defineStore('structure', {
             try {
                 let settingsStore = useSettingsStore();
 
-                let fileList = window.api.getAllFileNamesSync(settingsStore.pathToGame + '/game/localization/english');
-                fileList = fileList.map(item => {
-                    let name = item.replace(settingsStore.pathToGame + '/game/localization/english/', '').replace('_l_english.yml', '');
-                    let englishStructure = window.api.parseFile(item);
-                    let languageStructure = window.api.parseFile(settingsStore.pathToGame + '/game/localization/' + settingsStore.language + '/' + name + '_l_' + settingsStore.language + '.yml');
-                    let helpLanguageStructure = window.api.parseFile(settingsStore.pathToGame + '/game/localization/' + settingsStore.helpLanguage + '/' + name + '_l_' + settingsStore.helpLanguage + '.yml');
+                let fileList = window.api.getAllFileNamesSync(settingsStore.pathToApp);
+                fileList = fileList.map(name => {
+                    let englishStructure = window.api.parseFile(settingsStore.pathToApp, name, 'english');
+                    let languageStructure = window.api.parseFile(settingsStore.pathToApp, name, settingsStore.language);
                     
-                    return {
+                    let result = {
                         name,
                         structures: {
                             english: englishStructure,
                             [settingsStore.language]: languageStructure,
-                            [settingsStore.helpLanguage]: helpLanguageStructure,
                         }
-                    }
+                    };
+                    settingsStore.helpLanguages.forEach(helpLanguage => {
+                        let structure = window.api.parseFile(settingsStore.pathToApp, name, helpLanguage);
+                        result.structures[helpLanguage] = structure;
+                    });
+
+
+                    return result;
                 });
                 this.fileList = fileList.map(item => item.name);
+                let languageList = [
+                    'english',
+                    settingsStore.language,
+                    ...settingsStore.helpLanguages,
+                ]
                 this.dataByFile = fileList.reduce((acc, fileData) => {
-                    let englishDataByKey = _.groupBy(fileData.structures.english.data, 'key');
-                    let languageDataByKey = _.groupBy(fileData.structures[settingsStore.language].data, 'key');
-                    let helpLanguageDataByKey = _.groupBy(fileData.structures[settingsStore.helpLanguage].data, 'key');
+                    let keys = fileData.structures.english.data.map(item => item.key);
                     let dataByKey = {};
-                    Object.keys(englishDataByKey).forEach(key => {
-                        dataByKey[key] = {
-                            english: englishDataByKey[key][0],
-                            [settingsStore.language]: languageDataByKey[key] ? languageDataByKey[key][0] : null,
-                            [settingsStore.helpLanguage]: helpLanguageDataByKey[key] ? helpLanguageDataByKey[key][0] : null,
-                        }
+                    let fileDataGroupedByKeys = {};
+                    languageList.forEach(language => {
+                        fileDataGroupedByKeys[language] = _.groupBy(fileData.structures[language].data, 'key');
+                    });
+                    keys.forEach(key => {
+                        let data = {};
+                        languageList.forEach(language => {
+                            data[language] = fileDataGroupedByKeys[language][key] ? fileDataGroupedByKeys[language][key][0] : undefined;
+                        });
+                        dataByKey[key] = data;
                     });
                     return {
                         ...acc,
