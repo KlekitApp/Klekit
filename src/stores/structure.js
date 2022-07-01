@@ -57,34 +57,30 @@ export const useStructureStore = defineStore('structure', {
             try {
                 let settingsStore = useSettingsStore();
 
+                let languageList = [
+                    settingsStore.baseLanguage,
+                    settingsStore.language,
+                    ...settingsStore.helpLanguages,
+                ]
+
                 let fileList = window.api.getAllFileNamesSync(settingsStore.pathToApp);
                 fileList = fileList.map(name => {
-                    let englishStructure = window.api.parseFile(settingsStore.pathToApp, name, 'english');
-                    let languageStructure = window.api.parseFile(settingsStore.pathToApp, name, settingsStore.language);
-                    
                     let result = {
                         name,
-                        structures: {
-                            english: englishStructure,
-                            [settingsStore.language]: languageStructure,
-                        }
+                        structures: {}
                     };
-                    settingsStore.helpLanguages.forEach(helpLanguage => {
-                        let structure = window.api.parseFile(settingsStore.pathToApp, name, helpLanguage);
-                        result.structures[helpLanguage] = structure;
-                    });
 
+                    languageList.forEach(language => {
+                        let structure = window.api.parseFile(settingsStore.pathToApp, name, language);
+                        result.structures[language] = structure;
+                    });
 
                     return result;
                 });
                 this.fileList = fileList.map(item => item.name);
-                let languageList = [
-                    'english',
-                    settingsStore.language,
-                    ...settingsStore.helpLanguages,
-                ]
+
                 this.dataByFile = fileList.reduce((acc, fileData) => {
-                    let keys = fileData.structures.english.data.map(item => item.key);
+                    let keys = fileData.structures[settingsStore.baseLanguage].data.map(item => item.key);
                     let dataByKey = {};
                     let fileDataGroupedByKeys = {};
                     languageList.forEach(language => {

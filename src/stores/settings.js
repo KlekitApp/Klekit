@@ -3,6 +3,7 @@ import { useStructureStore } from './structure';
 
 export const useSettingsStore = defineStore('settings', {
   state: () => ({
+    baseLanguage: localStorage.getItem('baseLanguage') || 'english',
     helpLanguages: JSON.parse(localStorage.getItem('helpLanguages') || '[]'),
     language: localStorage.getItem('language') || 'ukrainian',
     googleTranslateCode: localStorage.getItem('googleTranslateCode') || '',
@@ -12,6 +13,7 @@ export const useSettingsStore = defineStore('settings', {
   actions: {
     save() {
       const structureStore = useStructureStore();
+      localStorage.setItem('baseLanguage', this.baseLanguage);
       localStorage.setItem('helpLanguages', JSON.stringify(this.helpLanguages));
       localStorage.setItem('language', this.language);
       localStorage.setItem('googleTranslateCode', this.googleTranslateCode);
