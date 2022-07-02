@@ -10,6 +10,14 @@ export const useSettingsStore = defineStore('settings', {
     pathToApp: localStorage.getItem('pathToApp') || '',
     isDialogOpen: false,
   }),
+  getters: {
+    sourceLanguages: state => {
+      return [
+        state.baseLanguage,
+        ...state.helpLanguages
+      ]
+    }
+  },
   actions: {
     save() {
       const structureStore = useStructureStore();

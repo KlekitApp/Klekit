@@ -110,7 +110,7 @@ contextBridge.exposeInMainWorld('api', {
                 result.data.push({
                     key,
                     line: line+startIndex+1,
-                    value,
+                    value: value.slice(1, -1),
                     meta: {
                         version,
                     }
