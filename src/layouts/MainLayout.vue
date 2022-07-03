@@ -109,7 +109,7 @@
 
 <script>
 import { useSettingsStore } from 'src/stores/settings';
-import { mapState, mapWritableState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useStructureStore } from 'src/stores/structure';
 import { useTranslatorStore } from 'src/stores/translator';
 
@@ -130,8 +130,9 @@ export default {
     ...mapState(useStructureStore, ['fileList', 'translatedPercentageByFile', 'activeFileData', 'activeFileDataKeys']),
   },
   methods: {
+    ...mapActions(useStructureStore, ['changeActiveFile']),
     selectFile (name) {
-      this.activeFile = name;
+      this.changeActiveFile(name);
       this.fileDrawerOpen = false;
     },
     selectKey (key) {

@@ -1,12 +1,15 @@
 import _ from 'lodash';
 import { defineStore } from 'pinia';
 import { useSettingsStore } from './settings';
+import {toRaw} from 'vue'
 
 export const useStructureStore = defineStore('structure', {
     state: () => ({
         fileList: [],
         activeFile: '',
         dataByFile: {},
+        comments: {},
+        parserMeta: {},
         isErrorWithList: false,
     }),
 
@@ -53,55 +56,80 @@ export const useStructureStore = defineStore('structure', {
     },
 
     actions: {
+
         fetch() {
             try {
                 let settingsStore = useSettingsStore();
 
-                let languageList = [
+                this.fileList = window.api.getAllFileNamesSync(settingsStore.pathToApp);
+
+                let languages = [
                     settingsStore.baseLanguage,
                     settingsStore.language,
                     ...settingsStore.helpLanguages,
-                ]
+                ];
 
-                let fileList = window.api.getAllFileNamesSync(settingsStore.pathToApp);
-                fileList = fileList.map(name => {
-                    let result = {
-                        name,
-                        structures: {}
-                    };
-
-                    languageList.forEach(language => {
-                        let structure = window.api.parseFile(settingsStore.pathToApp, name, language);
-                        result.structures[language] = structure;
-                    });
-
-                    return result;
-                });
-                this.fileList = fileList.map(item => item.name);
-
-                this.dataByFile = fileList.reduce((acc, fileData) => {
-                    let keys = fileData.structures[settingsStore.baseLanguage].data.map(item => item.key);
-                    let dataByKey = {};
-                    let fileDataGroupedByKeys = {};
-                    languageList.forEach(language => {
-                        fileDataGroupedByKeys[language] = _.groupBy(fileData.structures[language].data, 'key');
-                    });
-                    keys.forEach(key => {
-                        let data = {};
-                        languageList.forEach(language => {
-                            data[language] = fileDataGroupedByKeys[language][key] ? fileDataGroupedByKeys[language][key][0] : undefined;
-                        });
-                        dataByKey[key] = data;
-                    });
-                    return {
-                        ...acc,
-                        [fileData.name]: dataByKey,
-                    }
-                }, {});
+                this.fileList.forEach((name) => this.fetchFile(name, languages));
 
                 this.isErrorWithList = false;
             } catch (error) {
                 this.isErrorWithList = true;
+                console.log(error);
+            }
+        },
+        fetchFile(name, languages) {
+            let settingsStore = useSettingsStore();
+
+            let keys = [];
+            let fileDataGroupedByKeys = {};
+
+            languages.forEach(language => {
+                let structure = window.api.parseFile(settingsStore.pathToApp, name, language);
+                if (language === settingsStore.baseLanguage) {
+                    this.comments[name] = structure.comments;
+                    this.parserMeta[name] = structure.meta;
+                }
+                keys = keys.concat(structure.data.map(item => item.key));
+                fileDataGroupedByKeys[language] = _.groupBy(structure.data, 'key');
+            });
+            keys = _.uniq(keys);
+
+            let dataByKey = {};
+
+            keys.forEach(key => {
+                let data = {};
+                languages.forEach(language => {
+                    data[language] = fileDataGroupedByKeys[language][key] ? fileDataGroupedByKeys[language][key][0] : undefined;
+                });
+                dataByKey[key] = data;
+            });
+            
+            this.dataByFile[name] = dataByKey;
+        },
+        saveActiveFile() {
+            let settingsStore = useSettingsStore();
+
+            this.rawActiveFile = window.api.stringifyStructure({
+                data: _.mapValues(toRaw(this.dataByFile[this.activeFile]), item => item[settingsStore.language]),
+                comments: toRaw(this.comments[this.activeFile]),
+                meta: toRaw(this.parserMeta[this.activeFile]),
+            }, settingsStore.language, settingsStore.pathToApp, this.activeFile);
+
+            this.fetchFile(this.activeFile, [settingsStore.language]);
+        },
+
+        changeActiveFile(file) {
+            let settingsStore = useSettingsStore();
+
+            this.activeFile = file;
+
+            try {
+                this.rawActiveFile = window.api.stringifyStructure({
+                    data: _.mapValues(toRaw(this.dataByFile[file]), item => item[settingsStore.language]),
+                    comments: toRaw(this.comments[file]),
+                    meta: toRaw(this.parserMeta[file])
+                }, settingsStore.language);
+            } catch (error) {
                 console.log(error);
             }
         }

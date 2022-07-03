@@ -18,6 +18,7 @@
 import { contextBridge } from 'electron';
 import fs from 'fs';
 import path from 'path';
+import _ from 'lodash';
 
 contextBridge.exposeInMainWorld('api', {
     getAllFileNamesSync(pathToApp) {
@@ -51,7 +52,6 @@ contextBridge.exposeInMainWorld('api', {
             };
         }; 
         let strArray = str.split('\n');
-        let strLength = strArray.length;
         // find index of string in strArray that match /^l_/ and remove all before that but save in variable
         let startIndex = strArray.findIndex(item => item.trim().match(/^l_/));
         if (startIndex === -1) {
@@ -69,10 +69,10 @@ contextBridge.exposeInMainWorld('api', {
                 line: key,
                 text: item,
                 isComment: true
-            })),    
-            length: strLength,
-            language,
-            startIndex,
+            })),
+            meta: {
+                startIndex
+            }
         };
         strArray.forEach((str, line) => {
             let formatedStr = str.trim();
@@ -121,15 +121,16 @@ contextBridge.exposeInMainWorld('api', {
         return result;
     },
     
-    stringifyStructure(structure, pathToApp, name, language) {
+    stringifyStructure(structure, language, pathToApp, name) {
         let result = [];
         let preparedStructure = {
             ..._.groupBy(structure.comments, 'line'),
             ..._.groupBy(structure.data, 'line')
         }
-        for (let i = 0; i < structure.length; i++) {
-            if (i === startIndex) {
-                result[i] = "l_"+structure.language+":";
+        let maxLine = _.max(_.keys(preparedStructure));
+        for (let i = 0; i <= maxLine+1; i++) {
+            if (i === structure.meta.startIndex) {
+                result[i] = "l_"+language+":";
             } else if (!preparedStructure[i] || preparedStructure[i].length === 0) {
                 result[i] = '';
             } else if (preparedStructure[i].length === 1 && preparedStructure[i][0].isComment) {
@@ -138,6 +139,7 @@ contextBridge.exposeInMainWorld('api', {
                 result[i] = ' '+preparedStructure[i][0].key+':'+(preparedStructure[i][0].meta?.version || 0)+' '+preparedStructure[i][0].value;
             }
         }
+        result.push('');
         result = result.join('\n');
         if (pathToApp && name && language) {
             fs.writeFileSync(path.join(pathToApp, '/game/localization/' + language + '/' + name + '_l_' + language + '.yml'), str);
