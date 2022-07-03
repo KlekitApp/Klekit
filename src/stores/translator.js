@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { useSettingsStore } from "./settings";
 import { useStructureStore } from "./structure";
 import { toRaw } from "vue";
-import _ from "lodash";
+import _, { differenceBy } from "lodash";
 
 export const useTranslatorStore = defineStore("translator", {
     state: () => ({
@@ -10,7 +10,8 @@ export const useTranslatorStore = defineStore("translator", {
         activeValue: '',
         activeMeta: {},
         currentStructure: {},
-        rawFile: ''
+        rawFile: '',
+        isAutoNext: true,
     }),
             
     actions: {
@@ -19,9 +20,7 @@ export const useTranslatorStore = defineStore("translator", {
             const settingsStore = useSettingsStore();
 
             let structure = toRaw(structureStore.activeFileData[settingsStore.language] || {});
-            console.log(structure);
             if (!!this.activeKey && !!this.activeValue) {
-                console.log('setCurrentStructure', this.activeKey, this.activeValue);
                 structure[this.activeKey] = {
                     ...toRaw(structureStore.activeFileData[settingsStore.baseLanguage][this.activeKey]),
                     value: this.activeValue,
@@ -41,6 +40,23 @@ export const useTranslatorStore = defineStore("translator", {
             let structureStore = useStructureStore();
             
             structureStore.saveActiveFile();
+            if (this.isAutoNext) {
+                this.goToFirstUntranslatedKey();
+            }
+        },
+        goToFirstUntranslatedKey() {
+            let structureStore = useStructureStore();
+            let settingsStore = useSettingsStore();
+
+            let structure = toRaw(structureStore.activeFileData[settingsStore.language] || {});
+            let baseStructure = toRaw(structureStore.activeFileData[settingsStore.baseLanguage] || {});
+
+            let keys = Object.keys(structure);
+            let baseKeys = Object.keys(baseStructure);
+
+            let firstUntranslatedKey = _.differenceBy(baseKeys, keys).shift();
+
+            this.changeActiveKey(firstUntranslatedKey);
         },
         changeActiveKey(key) {
             let structureStore = useStructureStore();

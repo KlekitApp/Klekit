@@ -22,7 +22,6 @@ export default {
     methods: {
         ...mapActions(useTranslatorStore, ['inputActiveMeta', 'setCurrentStructure']),
         inputActiveMeta(value, key) {
-            console.log(value, key);
             this.activeMeta[key] = value;
             this.setCurrentStructure();
         }

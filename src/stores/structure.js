@@ -96,6 +96,7 @@ export const useStructureStore = defineStore('structure', {
             
             this.activeFile = file;
             translatorStore.reset();
+            translatorStore.goToFirstUntranslatedKey();
         }
     }
 });

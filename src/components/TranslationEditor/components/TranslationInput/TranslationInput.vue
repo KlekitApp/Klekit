@@ -8,21 +8,28 @@
             <q-btn
                 flat
                 dense
-                color="primary"
                 @click="saveTranslation" 
             > Save </q-btn>
+            <q-checkbox
+                v-model="isAutoNext"
+                label="Auto Next"
+                dense />
+
         </div>
     </div>
 </template>
 
 <script>
-import { mapActions } from 'pinia';
+import { mapActions, mapWritableState } from 'pinia';
 import MetadataInput from './components/MetadataInput.vue';
 import ValueInput from './components/ValueInput.vue';
 import { useTranslatorStore } from 'src/stores/translator';
 
 
 export default {
+    computed: {
+        ...mapWritableState(useTranslatorStore, ['isAutoNext']),
+    },
     methods: {
         ...mapActions(useTranslatorStore, ['saveTranslation']),
     },
