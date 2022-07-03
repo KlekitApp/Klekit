@@ -1,6 +1,6 @@
 <template>
     <SourceList v-if="activeKey" />
-    <q-footer elevated>
+    <q-footer elevated v-if="activeKey">
         <TranslationInput />
     </q-footer>
 </template>

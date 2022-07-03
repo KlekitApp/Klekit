@@ -12,6 +12,7 @@ export const useStructureStore = defineStore('structure', {
         comments: {},
         parserMeta: {},
         isErrorWithList: false,
+        parserSettings: {},
     }),
 
     getters: {
@@ -31,7 +32,7 @@ export const useStructureStore = defineStore('structure', {
                 if(baseKeys.length === 0) {
                     result[file] = 100;
                 } else {
-                    result[file] = Math.round((translatedKeys.length / baseKeys.length) * 100);
+                    result[file] = Math.round((translatedKeys.length / baseKeys.length) * 10000)/100;
                 }
             }
             );
@@ -43,6 +44,8 @@ export const useStructureStore = defineStore('structure', {
         fetch() {
             try {
                 let settingsStore = useSettingsStore();
+
+                settingsStore.parserSettings = window.api.getParserSettings();
 
                 this.fileList = window.api.getAllFileNamesSync(settingsStore.pathToApp);
 

@@ -9,6 +9,7 @@ export const useSettingsStore = defineStore('settings', {
     googleTranslateCode: localStorage.getItem('googleTranslateCode') || '',
     pathToApp: localStorage.getItem('pathToApp') || '',
     isDialogOpen: false,
+    parserSettings: {},
   }),
   getters: {
     sourceLanguages: state => {

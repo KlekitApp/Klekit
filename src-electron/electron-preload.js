@@ -21,6 +21,11 @@ import path from 'path';
 import _ from 'lodash';
 
 contextBridge.exposeInMainWorld('api', {
+    getParserSettings: () => {
+        return {
+            metaKeys: ['version']
+        }
+    },
     getAllFileNamesSync(pathToApp) {
         let baseDir = path.join(pathToApp, '/game/localization/english');
         function scanFiles(dir) {

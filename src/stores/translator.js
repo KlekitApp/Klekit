@@ -8,6 +8,7 @@ export const useTranslatorStore = defineStore("translator", {
     state: () => ({
         activeKey: '',
         activeValue: '',
+        activeMeta: {},
         currentStructure: {},
         rawFile: ''
     }),
@@ -23,7 +24,8 @@ export const useTranslatorStore = defineStore("translator", {
                 console.log('setCurrentStructure', this.activeKey, this.activeValue);
                 structure[this.activeKey] = {
                     ...toRaw(structureStore.activeFileData[settingsStore.baseLanguage][this.activeKey]),
-                    value: this.activeValue
+                    value: this.activeValue,
+                    meta: toRaw(this.activeMeta)
                 };
             }
 
@@ -46,12 +48,14 @@ export const useTranslatorStore = defineStore("translator", {
 
             this.activeKey = key;
             this.activeValue = toRaw(structureStore.activeFileData[settingsStore.language]?.[key]?.value || '');
+            this.activeMeta = toRaw(structureStore.activeFileData[settingsStore.language]?.[key]?.meta || {});
             
             this.setCurrentStructure();
         },
         reset() {
             this.activeKey = '';
             this.activeValue = '';
+            this.activeMeta = {};
             this.setCurrentStructure();
         }
     }
