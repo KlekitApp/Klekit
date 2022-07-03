@@ -95,7 +95,7 @@
             </q-item-section>
 
             <q-item-section side right>
-              <q-badge :color="activeFileData[key][language]?.value ? 'green' : 'red'" />
+              <q-badge :color="activeFileData[language]?.[key]?.value ? 'green' : 'red'" />
             </q-item-section>
           </q-item>
       </q-list>
@@ -124,19 +124,20 @@ export default {
   computed: {
     ...mapWritableState(useSettingsStore, ['isDialogOpen']),
     ...mapWritableState(useStructureStore, ['activeFile']),
-    ...mapWritableState(useTranslatorStore, ['activeKey']),
+    ...mapWritableState(useTranslatorStore, ['activeKey', 'activeValue']),
 
     ...mapState(useSettingsStore, ['language']),
     ...mapState(useStructureStore, ['fileList', 'translatedPercentageByFile', 'activeFileData', 'activeFileDataKeys']),
   },
   methods: {
     ...mapActions(useStructureStore, ['changeActiveFile']),
+    ...mapActions(useTranslatorStore, ['changeActiveKey']),
     selectFile (name) {
       this.changeActiveFile(name);
       this.fileDrawerOpen = false;
     },
     selectKey (key) {
-      this.activeKey = key;
+      this.changeActiveKey(key);
       this.fileKeysDrawerOpen = false;
     },
     toggleFileDrawer () {

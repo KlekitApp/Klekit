@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { defineStore } from 'pinia';
 import { useSettingsStore } from './settings';
 import {toRaw} from 'vue'
+import { useTranslatorStore } from './translator';
 
 export const useStructureStore = defineStore('structure', {
     state: () => ({
@@ -14,40 +15,23 @@ export const useStructureStore = defineStore('structure', {
     }),
 
     getters: {
-        library: state => {
-            // merge data from dataByFile
-            let library = {};
-            Object.keys(state.dataByFile).forEach(file => {
-                library = {
-                    ...library,
-                    ...state.dataByFile[file]
-                }
-            });
-            return library;
-        },
         activeFileData: state => {
             return state.dataByFile[state.activeFile] || {};
         },
         activeFileDataKeys: state => {
-            return Object.keys(state.dataByFile[state.activeFile] || {});
+            let settingsStore = useSettingsStore();
+            return Object.keys(state.dataByFile[state.activeFile]?.[settingsStore.baseLanguage] || {});
         },
         translatedPercentageByFile: state => {
             let settingsStore = useSettingsStore();
             let result = {};
-            Object.keys(state.dataByFile).forEach(file => {
-                let translated = 0;
-                let total = 0;
-                Object.keys(state.dataByFile[file]).forEach(key => {
-                    total++;
-                    if (state.dataByFile[file][key][settingsStore.language]?.value) {
-                        translated++;
-                    }
-                }
-                );
-                if(total === 0) {
+            state.fileList.forEach(file => {
+                let baseKeys = Object.keys(state.dataByFile[file]?.[settingsStore.baseLanguage] || {});
+                let translatedKeys = Object.keys(state.dataByFile[file]?.[settingsStore.language] || {});
+                if(baseKeys.length === 0) {
                     result[file] = 100;
                 } else {
-                    result[file] = Math.round((translated / total) * 100);
+                    result[file] = Math.round((translatedKeys.length / baseKeys.length) * 100);
                 }
             }
             );
@@ -56,7 +40,6 @@ export const useStructureStore = defineStore('structure', {
     },
 
     actions: {
-
         fetch() {
             try {
                 let settingsStore = useSettingsStore();
@@ -80,37 +63,24 @@ export const useStructureStore = defineStore('structure', {
         fetchFile(name, languages) {
             let settingsStore = useSettingsStore();
 
-            let keys = [];
-            let fileDataGroupedByKeys = {};
-
             languages.forEach(language => {
                 let structure = window.api.parseFile(settingsStore.pathToApp, name, language);
                 if (language === settingsStore.baseLanguage) {
                     this.comments[name] = structure.comments;
                     this.parserMeta[name] = structure.meta;
                 }
-                keys = keys.concat(structure.data.map(item => item.key));
-                fileDataGroupedByKeys[language] = _.groupBy(structure.data, 'key');
+                this.dataByFile[name] = {
+                    ...this.dataByFile[name],
+                    [language]: _.mapValues(_.groupBy(structure.data, 'key'), (data) => data[0]),
+                }
             });
-            keys = _.uniq(keys);
-
-            let dataByKey = {};
-
-            keys.forEach(key => {
-                let data = {};
-                languages.forEach(language => {
-                    data[language] = fileDataGroupedByKeys[language][key] ? fileDataGroupedByKeys[language][key][0] : undefined;
-                });
-                dataByKey[key] = data;
-            });
-            
-            this.dataByFile[name] = dataByKey;
         },
         saveActiveFile() {
             let settingsStore = useSettingsStore();
+            let translatorStore = useTranslatorStore();
 
-            this.rawActiveFile = window.api.stringifyStructure({
-                data: _.mapValues(toRaw(this.dataByFile[this.activeFile]), item => item[settingsStore.language]),
+            window.api.stringifyStructure({
+                data: toRaw(translatorStore.currentStructure),
                 comments: toRaw(this.comments[this.activeFile]),
                 meta: toRaw(this.parserMeta[this.activeFile]),
             }, settingsStore.language, settingsStore.pathToApp, this.activeFile);
@@ -119,19 +89,10 @@ export const useStructureStore = defineStore('structure', {
         },
 
         changeActiveFile(file) {
-            let settingsStore = useSettingsStore();
-
+            const translatorStore = useTranslatorStore();
+            
             this.activeFile = file;
-
-            try {
-                this.rawActiveFile = window.api.stringifyStructure({
-                    data: _.mapValues(toRaw(this.dataByFile[file]), item => item[settingsStore.language]),
-                    comments: toRaw(this.comments[file]),
-                    meta: toRaw(this.parserMeta[file])
-                }, settingsStore.language);
-            } catch (error) {
-                console.log(error);
-            }
+            translatorStore.reset();
         }
     }
 });

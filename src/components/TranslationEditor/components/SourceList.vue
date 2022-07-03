@@ -2,7 +2,7 @@
     <q-list separator class="absolute-full">
         <q-item v-for="(language, index) in sourceLanguages" :key="index">
             <q-item-section>
-                <q-item-label class="text-h6">{{activeFileData[activeKey][language].value}}</q-item-label>
+                <q-item-label class="text-h6">{{activeFileData[language]?.[activeKey]?.value || 'NO VALUE FOR THIS LANGUAGE'}}</q-item-label>
                 <q-item-label caption>{{language}}</q-item-label>
             </q-item-section>
         </q-item>

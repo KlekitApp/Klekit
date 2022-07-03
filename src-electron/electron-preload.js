@@ -127,22 +127,22 @@ contextBridge.exposeInMainWorld('api', {
             ..._.groupBy(structure.comments, 'line'),
             ..._.groupBy(structure.data, 'line')
         }
-        let maxLine = _.max(_.keys(preparedStructure));
+        let maxLine = _.maxBy(Object.keys(preparedStructure), key => parseInt(key));
         for (let i = 0; i <= maxLine+1; i++) {
             if (i === structure.meta.startIndex) {
                 result[i] = "l_"+language+":";
-            } else if (!preparedStructure[i] || preparedStructure[i].length === 0) {
-                result[i] = '';
-            } else if (preparedStructure[i].length === 1 && preparedStructure[i][0].isComment) {
+            } else if (preparedStructure[i]?.length === 1 && preparedStructure[i][0].isComment) {
                 result[i] = preparedStructure[i][0].text;
+            } else if (preparedStructure[i]?.length === 1) {
+                result[i] = ' '+preparedStructure[i][0].key+':'+(preparedStructure[i][0].meta?.version || 0)+' "'+preparedStructure[i][0].value+'"';
             } else {
-                result[i] = ' '+preparedStructure[i][0].key+':'+(preparedStructure[i][0].meta?.version || 0)+' '+preparedStructure[i][0].value;
+                result[i] = '';
             }
         }
         result.push('');
         result = result.join('\n');
         if (pathToApp && name && language) {
-            fs.writeFileSync(path.join(pathToApp, '/game/localization/' + language + '/' + name + '_l_' + language + '.yml'), str);
+            fs.writeFileSync(path.join(pathToApp, '/game/localization/' + language + '/' + name + '_l_' + language + '.yml'), result);
         }
         return result;
     }

@@ -1,13 +1,28 @@
 <template>
-    <q-card>
-        ValueInput
-    </q-card>
+    <q-input
+        :modelValue="activeValue"
+        @update:modelValue="inputActiveValue"
+        debounce="500"
+        filled
+        :label="activeKey"
+        type="textarea"></q-input>
 </template>
 
 <script>
+import { mapActions, mapState, mapWritableState } from 'pinia'
+import { useTranslatorStore } from 'src/stores/translator'
+
 export default {
-    setup() {
-        
+    computed: {
+        ...mapState(useTranslatorStore, ['activeKey']),
+        ...mapWritableState(useTranslatorStore, ['activeValue']),
+    },
+    methods: {
+        ...mapActions(useTranslatorStore, ['setCurrentStructure']),
+        inputActiveValue (value) {
+            this.activeValue = value;
+            this.setCurrentStructure();
+        }
     },
 }
 </script>
