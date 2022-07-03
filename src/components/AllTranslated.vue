@@ -1,12 +1,12 @@
 <template>
     <q-card class="q-pa-md" flat>
       <q-card-section>
-        <div class="text-h2 text-center">
+        <div class="text-h4 text-center">
             Hooray!!!
         </div>
       </q-card-section>
       <q-card-section>
-        <div class="text-h4 text-center">
+        <div class="text-h6 text-center">
             This file has full translation!!!
         </div>
       </q-card-section>
