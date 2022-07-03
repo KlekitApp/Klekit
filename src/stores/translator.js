@@ -55,8 +55,10 @@ export const useTranslatorStore = defineStore("translator", {
             let baseKeys = Object.keys(baseStructure);
 
             let firstUntranslatedKey = _.differenceBy(baseKeys, keys).shift();
-
-            this.changeActiveKey(firstUntranslatedKey);
+            
+            if (!!firstUntranslatedKey) {
+                this.changeActiveKey(firstUntranslatedKey);
+            }
         },
         changeActiveKey(key) {
             let structureStore = useStructureStore();

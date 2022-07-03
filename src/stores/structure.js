@@ -97,6 +97,13 @@ export const useStructureStore = defineStore('structure', {
             this.activeFile = file;
             translatorStore.reset();
             translatorStore.goToFirstUntranslatedKey();
+        },
+
+        goToFirstUntranslatedFile() {
+            let file = _.find(this.fileList, file => this.translatedPercentageByFile[file] < 100);
+            if (file) {
+                this.changeActiveFile(file);
+            }
         }
     }
 });

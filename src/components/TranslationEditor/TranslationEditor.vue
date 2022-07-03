@@ -1,4 +1,6 @@
 <template>
+    <no-active-key v-if="!activeKey && translatedPercentageByFile[activeFile]<100" />
+    <all-translated v-if="!activeKey && translatedPercentageByFile[activeFile] === 100" />
     <SourceList v-if="activeKey" />
     <q-footer elevated v-if="activeKey">
         <TranslationInput />
@@ -10,13 +12,19 @@ import { mapState } from 'pinia';
 import SourceList from './components/SourceList.vue';
 import TranslationInput from './components/TranslationInput/TranslationInput.vue';
 import { useTranslatorStore } from 'src/stores/translator';
+import NoActiveKey from '../NoActiveKey.vue';
+import AllTranslated from '../AllTranslated.vue';
+import { useStructureStore } from 'src/stores/structure';
 export default {
     computed: {
         ...mapState(useTranslatorStore, ['activeKey']),
+        ...mapState(useStructureStore, ['activeFile', 'translatedPercentageByFile']),
     },
     components: {
         SourceList,
-        TranslationInput
+        TranslationInput,
+        NoActiveKey,
+        AllTranslated
     }
 }
 </script>
