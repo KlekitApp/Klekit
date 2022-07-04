@@ -6,7 +6,6 @@
         @update:model-value="value => inputActiveMeta(value, key)"
         debounce="500"
         filled
-        dense
         :label="key"></q-input>
 </template>
 

@@ -4,7 +4,6 @@
         @update:modelValue="inputActiveValue"
         debounce="500"
         filled
-        dense
         :label="activeKey"
         type="textarea"></q-input>
 </template>

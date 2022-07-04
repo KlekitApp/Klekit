@@ -1,33 +1,41 @@
 <template>
-    <div class="row">
+    <div class="row text-black">
         <div class="col-10">
-            <value-input />
-            <metadata-input />
+            <q-card class="q-pl-md q-pr-md q-pb-md" flat>
+                <q-card-section>
+                    <p class="text-grey">{{language}}:</p>
+                    <value-input />
+                    <p class="q-pt-md text-grey">Meta Data:</p>
+                    <metadata-input />
+                </q-card-section>
+            </q-card>
         </div>
-        <div class="col-2">
+        <div class="col-2 q-pr-md q-pt-md">
+            <p class="text-white">Actions:</p>
             <q-btn
-                flat
-                dense
+                unelevated
+                color="green"
+                class="full-width"
                 @click="saveTranslation" 
             > Save </q-btn>
             <q-checkbox
                 v-model="isAutoNext"
-                label="Auto Next"
-                dense />
-
+                label="Auto Next"/>
         </div>
     </div>
 </template>
 
 <script>
-import { mapActions, mapWritableState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 import MetadataInput from './components/MetadataInput.vue';
 import ValueInput from './components/ValueInput.vue';
 import { useTranslatorStore } from 'src/stores/translator';
+import { useSettingsStore } from 'src/stores/settings';
 
 
 export default {
     computed: {
+        ...mapState(useSettingsStore, ['language']),
         ...mapWritableState(useTranslatorStore, ['isAutoNext']),
     },
     methods: {

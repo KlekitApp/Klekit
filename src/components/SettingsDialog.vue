@@ -45,14 +45,6 @@
           />
         </q-card-section>
 
-        <q-card-section class="q-pt-none">
-          <q-input
-            label="Google Translate Language Code"
-            v-model="googleTranslateCode"
-            @keyup.enter="save"
-          />
-        </q-card-section>
-
         <q-card-actions align="right" class="text-primary">
           <q-btn flat label="Ok" v-close-popup @click="save" />
         </q-card-actions>
@@ -67,7 +59,7 @@ import { useSettingsStore } from 'src/stores/settings'
 export default {
     name: 'SettingsDialog',
     computed: {
-      ...mapWritableState(useSettingsStore, ['baseLanguage', 'language', 'helpLanguages', 'pathToApp', 'googleTranslateCode', 'isDialogOpen']),
+      ...mapWritableState(useSettingsStore, ['baseLanguage', 'language', 'helpLanguages', 'pathToApp', 'isDialogOpen']),
     },
     methods: {
       ...mapActions(useSettingsStore, ['save']),

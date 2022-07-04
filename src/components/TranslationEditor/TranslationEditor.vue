@@ -2,7 +2,7 @@
     <no-active-key v-if="!activeKey && translatedPercentageByFile[activeFile]<100" />
     <all-translated v-if="!activeKey && translatedPercentageByFile[activeFile] === 100" />
     <SourceList v-if="activeKey" />
-    <q-footer elevated v-if="activeKey">
+    <q-footer bordered class="bg-white text-black" v-if="activeKey">
         <TranslationInput />
     </q-footer>
 </template>

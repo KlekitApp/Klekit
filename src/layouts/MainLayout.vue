@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header>
       <q-toolbar>
         <q-btn
           flat
@@ -44,10 +44,13 @@
         />
       </q-bar>
     </q-header>
-
     <q-drawer
-      v-model="fileDrawerOpen"
+      side="left"
       show-if-above
+      v-model="fileDrawerOpen"
+      behavior="mobile"
+      overlay
+      :max-width="300"
       bordered
     >
       <q-list bordered separator>
@@ -73,10 +76,11 @@
     </q-drawer>
     <q-drawer
       side="right"
-      :width="200"
+      show-if-above
       v-model="fileKeysDrawerOpen"
-      :breakpoint="700"
-      elevated
+      behavior="mobile"
+      overlay
+      :max-width="300"
       bordered
     >
       <q-list bordered separator>
