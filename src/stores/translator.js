@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
-import { useSettingsStore } from "./settings";
+import { useProjectsStore } from "./projects";
 import { useStructureStore } from "./structure";
 import { toRaw } from "vue";
-import _, { differenceBy } from "lodash";
+import _ from "lodash";
 
 export const useTranslatorStore = defineStore("translator", {
     state: () => ({
@@ -17,12 +17,12 @@ export const useTranslatorStore = defineStore("translator", {
     actions: {
         setCurrentStructure() {
             const structureStore = useStructureStore();
-            const settingsStore = useSettingsStore();
+            const projectsStore = useProjectsStore();
 
-            let structure = toRaw(structureStore.activeFileData[settingsStore.language] || {});
+            let structure = toRaw(structureStore.activeFileData[projectsStore.language] || {});
             if (!!this.activeKey && !!this.activeValue) {
                 structure[this.activeKey] = {
-                    ...toRaw(structureStore.activeFileData[settingsStore.baseLanguage][this.activeKey]),
+                    ...toRaw(structureStore.activeFileData[projectsStore.baseLanguage][this.activeKey]),
                     value: this.activeValue,
                     meta: toRaw(this.activeMeta)
                 };
@@ -34,7 +34,7 @@ export const useTranslatorStore = defineStore("translator", {
                 data: toRaw(structure),
                 comments: toRaw(structureStore.comments[structureStore.activeFile]),
                 meta: toRaw(structureStore.parserMeta[structureStore.activeFile])
-            }, settingsStore.language);
+            }, projectsStore.language);
         },
         saveTranslation() {
             let structureStore = useStructureStore();
@@ -46,10 +46,10 @@ export const useTranslatorStore = defineStore("translator", {
         },
         goToFirstUntranslatedKey() {
             let structureStore = useStructureStore();
-            let settingsStore = useSettingsStore();
+            let projectsStore = useProjectsStore();
 
-            let structure = toRaw(structureStore.activeFileData[settingsStore.language] || {});
-            let baseStructure = toRaw(structureStore.activeFileData[settingsStore.baseLanguage] || {});
+            let structure = toRaw(structureStore.activeFileData[projectsStore.language] || {});
+            let baseStructure = toRaw(structureStore.activeFileData[projectsStore.baseLanguage] || {});
 
             let keys = Object.keys(structure);
             let baseKeys = Object.keys(baseStructure);
@@ -62,11 +62,11 @@ export const useTranslatorStore = defineStore("translator", {
         },
         changeActiveKey(key) {
             let structureStore = useStructureStore();
-            let settingsStore = useSettingsStore();
+            let projectsStore = useProjectsStore();
 
             this.activeKey = key;
-            this.activeValue = toRaw(structureStore.activeFileData[settingsStore.language]?.[key]?.value || '');
-            this.activeMeta = toRaw(structureStore.activeFileData[settingsStore.language]?.[key]?.meta || {});
+            this.activeValue = toRaw(structureStore.activeFileData[projectsStore.language]?.[key]?.value || '');
+            this.activeMeta = toRaw(structureStore.activeFileData[projectsStore.language]?.[key]?.meta || {});
             
             this.setCurrentStructure();
         },

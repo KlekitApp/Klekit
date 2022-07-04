@@ -8,10 +8,10 @@
 </template>
 
 <script>
-import SettingsDialog from '../components/SettingsDialog.vue';
-import NothingToTranslate from '../components/NothingToTranslate.vue';
-import TranslationEditor from '../components/TranslationEditor/TranslationEditor.vue';
-import NoActiveFile from '../components/NoActiveFile.vue';
+import SettingsDialog from './components/SettingsDialog.vue';
+import NothingToTranslate from './components/NothingToTranslate.vue';
+import TranslationEditor from './components/TranslationEditor/TranslationEditor.vue';
+import NoActiveFile from './components/NoActiveFile.vue';
 import { useStructureStore } from 'src/stores/structure';
 import { mapState } from 'pinia';
 

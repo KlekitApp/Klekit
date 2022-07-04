@@ -30,12 +30,12 @@ import { mapActions, mapState, mapWritableState } from 'pinia';
 import MetadataInput from './components/MetadataInput.vue';
 import ValueInput from './components/ValueInput.vue';
 import { useTranslatorStore } from 'src/stores/translator';
-import { useSettingsStore } from 'src/stores/settings';
+import { useProjectsStore } from 'src/stores/projects';
 
 
 export default {
     computed: {
-        ...mapState(useSettingsStore, ['language']),
+        ...mapState(useProjectsStore, ['language']),
         ...mapWritableState(useTranslatorStore, ['isAutoNext']),
     },
     methods: {

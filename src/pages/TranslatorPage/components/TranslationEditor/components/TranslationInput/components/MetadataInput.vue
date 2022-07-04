@@ -1,6 +1,6 @@
 <template>
     <q-input
-        v-for="key in (parserSettings?.metaKeys)"
+        v-for="key in (parser?.metaKeys)"
         :key="key"
         :model-value="activeMeta[key] || ''"
         @update:model-value="value => inputActiveMeta(value, key)"
@@ -12,11 +12,11 @@
 <script>
 import { useTranslatorStore } from 'src/stores/translator'
 import { mapActions, mapState } from 'pinia'
-import { useSettingsStore } from 'src/stores/settings'
+import { useProjectsStore } from 'src/stores/projects'
 export default {
     computed: {
         ...mapState(useTranslatorStore, ['activeMeta']),
-        ...mapState(useSettingsStore, ['parserSettings']),
+        ...mapState(useProjectsStore, ['parser']),
     },
     methods: {
         ...mapActions(useTranslatorStore, ['inputActiveMeta', 'setCurrentStructure']),

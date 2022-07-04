@@ -9,25 +9,25 @@
         <q-card-section class="q-pt-none">
           <q-input
             label="Base Language"
-            v-model="baseLanguage"
+            v-model="editedProject.baseLanguage"
             autofocus
-            @keyup.enter="save"
+            @keyup.enter="saveProject"
           />
         </q-card-section>
 
         <q-card-section class="q-pt-none">
           <q-input
             label="Translate Language"
-            v-model="language"
+            v-model="editedProject.language"
             autofocus
-            @keyup.enter="save"
+            @keyup.enter="saveProject"
           />
         </q-card-section>
 
         <q-card-section class="q-pt-none">
           <q-select
             label="Help Languages"
-            v-model="helpLanguages"
+            v-model="editedProject.helpLanguages"
             use-input
             use-chips
             multiple
@@ -40,29 +40,38 @@
         <q-card-section class="q-pt-none">
           <q-input
             label="Path To Game"
-            v-model="pathToApp"
-            @keyup.enter="save"
+            v-model="editedProject.pathToApp"
+            @keyup.enter="saveProject"
           />
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <q-select
+            v-model="editedProject.parser"
+            :options="parsers"
+            option-value="id"
+            option-label="name"
+            label="Parser" />
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
-          <q-btn flat label="Ok" v-close-popup @click="save" />
+          <q-btn flat label="Ok" v-close-popup @click="saveProject" />
         </q-card-actions>
       </q-card>
     </q-dialog>
 </template>
 
 <script>
-import { mapActions, mapWritableState } from 'pinia';
-import { useSettingsStore } from 'src/stores/settings'
+import { mapActions, mapState, mapWritableState } from 'pinia';
+import { useProjectsStore } from 'src/stores/projects';
 
 export default {
     name: 'SettingsDialog',
     computed: {
-      ...mapWritableState(useSettingsStore, ['baseLanguage', 'language', 'helpLanguages', 'pathToApp', 'isDialogOpen']),
+      ...mapWritableState(useProjectsStore, ['editedProject', 'isDialogOpen']),
+      ...mapState(useProjectsStore, ['parsers']),
     },
     methods: {
-      ...mapActions(useSettingsStore, ['save']),
+      ...mapActions(useProjectsStore, ['saveProject']),
     }
 };
 </script>

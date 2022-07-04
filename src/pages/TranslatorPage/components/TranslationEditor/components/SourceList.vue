@@ -13,14 +13,14 @@
 import { useStructureStore } from 'src/stores/structure';
 import { useTranslatorStore } from 'src/stores/translator';
 import { mapState } from 'pinia';
-import { useSettingsStore } from 'src/stores/settings';
+import { useProjectsStore } from 'src/stores/projects';
 
 export default {
     name: 'SourceList',
     computed: {
       ...mapState(useStructureStore, ['activeFile', 'activeFileData']),
       ...mapState(useTranslatorStore, ['activeKey']),
-      ...mapState(useSettingsStore, ['sourceLanguages']),
+      ...mapState(useProjectsStore, ['sourceLanguages']),
     },
 }
 </script>

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { defineStore } from 'pinia';
-import { useSettingsStore } from './settings';
+import { useProjectsStore } from './projects';
 import {toRaw} from 'vue'
 import { useTranslatorStore } from './translator';
 
@@ -20,15 +20,15 @@ export const useStructureStore = defineStore('structure', {
             return state.dataByFile[state.activeFile] || {};
         },
         activeFileDataKeys: state => {
-            let settingsStore = useSettingsStore();
-            return Object.keys(state.dataByFile[state.activeFile]?.[settingsStore.baseLanguage] || {});
+            let projectsStore = useProjectsStore();
+            return Object.keys(state.dataByFile[state.activeFile]?.[projectsStore.projectsStore] || {});
         },
         translatedPercentageByFile: state => {
-            let settingsStore = useSettingsStore();
+            let projectsStore = useProjectsStore();
             let result = {};
             state.fileList.forEach(file => {
-                let baseKeys = Object.keys(state.dataByFile[file]?.[settingsStore.baseLanguage] || {});
-                let translatedKeys = Object.keys(state.dataByFile[file]?.[settingsStore.language] || {});
+                let baseKeys = Object.keys(state.dataByFile[file]?.[projectsStore.baseLanguage] || {});
+                let translatedKeys = Object.keys(state.dataByFile[file]?.[projectsStore.language] || {});
                 if(baseKeys.length === 0) {
                     result[file] = 100;
                 } else {
@@ -43,16 +43,16 @@ export const useStructureStore = defineStore('structure', {
     actions: {
         fetch() {
             try {
-                let settingsStore = useSettingsStore();
+                let projectsStore = useProjectsStore();
 
-                settingsStore.parserSettings = window.api.getParserSettings();
+                projectsStore.parserSettings = window.api.getParserSettings();
 
-                this.fileList = window.api.getAllFileNamesSync(settingsStore.pathToApp);
+                this.fileList = window.api.getAllFileNamesSync(projectsStore.pathToApp);
 
                 let languages = [
-                    settingsStore.baseLanguage,
-                    settingsStore.language,
-                    ...settingsStore.helpLanguages,
+                    projectsStore.baseLanguage,
+                    projectsStore.language,
+                    ...projectsStore.helpLanguages,
                 ];
 
                 this.fileList.forEach((name) => this.fetchFile(name, languages));
@@ -64,11 +64,11 @@ export const useStructureStore = defineStore('structure', {
             }
         },
         fetchFile(name, languages) {
-            let settingsStore = useSettingsStore();
+            let projectsStore = useProjectsStore();
 
             languages.forEach(language => {
-                let structure = window.api.parseFile(settingsStore.pathToApp, name, language);
-                if (language === settingsStore.baseLanguage) {
+                let structure = window.api.parseFile(projectsStore.pathToApp, name, language);
+                if (language === projectsStore.baseLanguage) {
                     this.comments[name] = structure.comments;
                     this.parserMeta[name] = structure.meta;
                 }
@@ -79,16 +79,16 @@ export const useStructureStore = defineStore('structure', {
             });
         },
         saveActiveFile() {
-            let settingsStore = useSettingsStore();
+            let projectsStore = useProjectsStore();
             let translatorStore = useTranslatorStore();
 
             window.api.stringifyStructure({
                 data: toRaw(translatorStore.currentStructure),
                 comments: toRaw(this.comments[this.activeFile]),
                 meta: toRaw(this.parserMeta[this.activeFile]),
-            }, settingsStore.language, settingsStore.pathToApp, this.activeFile);
+            }, projectsStore.language, projectsStore.pathToApp, this.activeFile);
 
-            this.fetchFile(this.activeFile, [settingsStore.language]);
+            this.fetchFile(this.activeFile, [projectsStore.language]);
         },
 
         changeActiveFile(file) {

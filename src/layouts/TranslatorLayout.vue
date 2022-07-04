@@ -20,7 +20,7 @@
           dense
           round
           icon="settings"
-          aria-label="Menu"
+          aria-label="Settings"
           @click="isDialogOpen = true"
         />
       </q-toolbar>
@@ -112,13 +112,13 @@
 </template>
 
 <script>
-import { useSettingsStore } from 'src/stores/settings';
+import { useProjectsStore } from 'src/stores/projects';
 import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useStructureStore } from 'src/stores/structure';
 import { useTranslatorStore } from 'src/stores/translator';
 
 export default {
-  name: 'MainLayout',
+  name: 'TranslatorLayout',
   data: () => {
     return {
       fileDrawerOpen: false,
@@ -126,11 +126,10 @@ export default {
     }
   },
   computed: {
-    ...mapWritableState(useSettingsStore, ['isDialogOpen']),
     ...mapWritableState(useStructureStore, ['activeFile']),
     ...mapWritableState(useTranslatorStore, ['activeKey', 'activeValue']),
 
-    ...mapState(useSettingsStore, ['language']),
+    ...mapState(useProjectsStore, ['language']),
     ...mapState(useStructureStore, ['fileList', 'translatedPercentageByFile', 'activeFileData', 'activeFileDataKeys']),
   },
   methods: {
