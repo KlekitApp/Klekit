@@ -1,9 +1,12 @@
 <template>
   <div class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center">
     <div>
+      <div style="font-size: 30vh">
+        404
+      </div>
 
       <div class="text-h2" style="opacity:.4">
-        <q-icon name="warning" color="negative"></q-icon> Oops. Something went wrong. Try to select Project again.
+        Oops. Nothing here...
       </div>
 
       <q-btn
@@ -11,8 +14,8 @@
         color="white"
         text-color="blue"
         unelevated
-        to="/projects"
-        label="Go to Project list"
+        to="/"
+        label="Go Home"
         no-caps
       />
     </div>

@@ -26,11 +26,5 @@ export default route(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE)
   })
 
-  Router.beforeEach((to, from, next) => {
-    if (to.params.file) {
-      window.api.setProjectId(to.params.projectId)
-    }
-  });
-
   return Router
 })
