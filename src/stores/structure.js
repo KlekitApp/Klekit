@@ -20,7 +20,7 @@ export const useStructureStore = defineStore('structure', {
         },
         activeFileDataKeys: state => {
             let projectsStore = useProjectsStore();
-            return Object.keys(state.dataByFile[state.activeFile]?.[projectsStore.projectsStore] || {});
+            return Object.keys(state.dataByFile[state.activeFile]?.[projectsStore.baseLanguage] || {});
         },
         translatedPercentageByFile: state => {
             let projectsStore = useProjectsStore();
