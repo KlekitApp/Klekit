@@ -15,7 +15,10 @@
  *     doAThing: () => {}
  *   })
  */
-import { contextBridge, app } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron';
+import fs from 'fs';
+import path from 'path';
+import _ from 'lodash';
 
 import ParadoxParser from './parsers/paradox';
 
@@ -59,31 +62,42 @@ contextBridge.exposeInMainWorld('api', {
         }
     },
 
-    getProjects: () => {
+    getProjects: async () => {
         let projects = {};
-        let pathToProjects = app.getPath('appData') + '/projects';
+        let pathToKlekit = await ipcRenderer.invoke('getPath') + '/Klekit';
+        if (!fs.existsSync(pathToKlekit)) {
+            fs.mkdirSync(pathToKlekit);
+        }
+
+        let pathToProjects = pathToKlekit + '/projects';
+        if (!fs.existsSync(pathToProjects)) {
+            fs.mkdirSync(pathToProjects);
+        }
+    
         let files = fs.readdirSync(pathToProjects);
+        
         files.forEach(file => {
             let pathToFile = path.join(pathToProjects, file);
             let str = fs.readFileSync(pathToFile, 'utf8');
             let project = JSON.parse(str);
+            let id = file.replace('.json', '');
             projects[id] = {
                 ...project,
-                id: file.replace('.json', '')
+                id
             };
         });
         return projects;
     },
 
-    saveProject(project) {
-        let pathToProjects = app.getPath('appData') + '/projects';
+    async saveProject(project) {
+        let pathToProjects = await ipcRenderer.invoke('getPath') + '/Klekit/projects';
         let pathToFile = path.join(pathToProjects, project.id + '.json');
         delete project.id;
         fs.writeFileSync(pathToFile, JSON.stringify(project));
     },
     
-    deleteProject(id) {
-        let pathToProjects = app.getPath('appData') + '/projects';
+    async deleteProject(id) {
+        let pathToProjects = await ipcRenderer.invoke('getPath') + '/Klekit/projects';
         let pathToFile = path.join(pathToProjects, id + '.json');
         fs.unlinkSync(pathToFile);
     }

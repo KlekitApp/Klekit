@@ -17,11 +17,8 @@
 
         <q-btn
           flat
-          dense
-          round
-          icon="settings"
-          aria-label="Settings"
-          @click="isDialogOpen = true"
+          label="Back To Projects"
+          to="/"
         />
       </q-toolbar>
 

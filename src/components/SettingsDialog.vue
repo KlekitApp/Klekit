@@ -1,9 +1,18 @@
 <template>
-    <q-dialog v-model="isDialogOpen" persistent>
+    <q-dialog v-model="isDialogOpen">
       <q-card style="min-width: 350px">
 
         <q-card-section>
           <div class="text-h6">Settings</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input
+            label="Name"
+            v-model="editedProject.name"
+            autofocus
+            @keyup.enter="saveProject"
+          />
         </q-card-section>
 
         <q-card-section class="q-pt-none">

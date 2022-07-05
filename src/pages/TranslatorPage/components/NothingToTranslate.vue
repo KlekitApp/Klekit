@@ -7,7 +7,18 @@
       </q-card-section>
       <q-card-section>
         <div class="text-subtitle1 text-center">
-          Seems like you have problem with settings, please check them and try again.
+          Seems like you have problem with project settings, please check them and try again.
+        </div>
+      </q-card-section>
+      <q-card-section>
+        <div class="text-center">
+          <q-btn
+            unelevated
+            rounded
+            color="primary"
+            label="Back To Projects"
+            to="/"
+          />
         </div>
       </q-card-section>
     </q-card>

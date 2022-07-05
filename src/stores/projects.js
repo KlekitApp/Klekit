@@ -15,17 +15,19 @@ export const useProjectsStore = defineStore('projects', {
         baseLanguage: state => state.projects[state.activeProjectId]?.baseLanguage || '',
         helpLanguages: state => state.projects[state.activeProjectId]?.helpLanguages || [],
         pathToApp: state => state.projects[state.activeProjectId]?.pathToApp || '',
-        parser: state => state.parsers.find(parser => parser.id === state.projects[state.activeProjectId]?.parser),
-        sourceLanguages: state => [
-            this.language,
-            this.baseLanguage,
-            ...this.helpLanguages
-        ],
+        parser: state => state.parsers.find(parser => parser.id === state.projects[state.activeProjectId]?.parser?.id),
+        getParserById: state => id => state.parsers.find(parser => parser.id === id),
+        sourceLanguages(state) { 
+            return [
+                this.baseLanguage,
+                ...this.helpLanguages
+            ]
+    },
     },
     actions: {
-        fetchProjects() {
-            this.projects = windows.api.getProjects();
-            this.parsers = windows.api.getParsers();
+        async fetchProjects() {
+            this.projects = await window.api.getProjects();
+            this.parsers = window.api.getParsers();
         },
         editOrCreateProject(projectId) {
             if (projectId) {
@@ -42,12 +44,13 @@ export const useProjectsStore = defineStore('projects', {
             this.editedProject = {};
         },
         saveProject() {
-            projects[editedProject.id] = editedProject;
+            let project = toRaw(this.editedProject)
+            this.projects[project.id] = project;
             window.api.saveProject(project);
             this.closeDialog();
         },
         deleteProject(id) {
-            delete projects[id];
+            delete this.projects[id];
             window.api.deleteProject(id);
         }
     },

@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { defineStore } from 'pinia';
-import { useProjectsStore } from './projects';
 import {toRaw} from 'vue'
 import { useTranslatorStore } from './translator';
+import { useProjectsStore } from './projects';
 
 export const useStructureStore = defineStore('structure', {
     state: () => ({
@@ -12,7 +12,6 @@ export const useStructureStore = defineStore('structure', {
         comments: {},
         parserMeta: {},
         isErrorWithList: false,
-        parserSettings: {},
     }),
 
     getters: {
@@ -45,9 +44,7 @@ export const useStructureStore = defineStore('structure', {
             try {
                 let projectsStore = useProjectsStore();
 
-                projectsStore.parserSettings = window.api.getParserSettings();
-
-                this.fileList = window.api.getAllFileNamesSync(projectsStore.pathToApp);
+                this.fileList = window.api.getAllFileNamesSync(projectsStore.parser.id, projectsStore.pathToApp);
 
                 let languages = [
                     projectsStore.baseLanguage,
@@ -67,7 +64,7 @@ export const useStructureStore = defineStore('structure', {
             let projectsStore = useProjectsStore();
 
             languages.forEach(language => {
-                let structure = window.api.parseFile(projectsStore.pathToApp, name, language);
+                let structure = window.api.parseFile(projectsStore.parser.id, projectsStore.pathToApp, name, language);
                 if (language === projectsStore.baseLanguage) {
                     this.comments[name] = structure.comments;
                     this.parserMeta[name] = structure.meta;
@@ -82,7 +79,7 @@ export const useStructureStore = defineStore('structure', {
             let projectsStore = useProjectsStore();
             let translatorStore = useTranslatorStore();
 
-            window.api.stringifyStructure({
+            window.api.stringifyStructure(projectsStore.parser.id, {
                 data: toRaw(translatorStore.currentStructure),
                 comments: toRaw(this.comments[this.activeFile]),
                 meta: toRaw(this.parserMeta[this.activeFile]),
@@ -104,6 +101,15 @@ export const useStructureStore = defineStore('structure', {
             if (file) {
                 this.changeActiveFile(file);
             }
+        },
+
+        reset() {
+            this.fileList = [];
+            this.dataByFile = {};
+            this.comments = {};
+            this.parserMeta = {};
+            this.isErrorWithList = false;
+            this.activeFile = '';
         }
     }
 });
