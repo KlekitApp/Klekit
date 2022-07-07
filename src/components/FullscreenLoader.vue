@@ -1,26 +1,12 @@
 <template>
-  <router-view />
-  <fullscreen-loader v-if="isLoading"></fullscreen-loader>
+  <div class="loader">
+    <div class="flex absolute-center">
+      <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    </div>
+  </div>
 </template>
 
-<script>
-import { defineComponent } from 'vue';
-import FullscreenLoader from 'src/components/FullscreenLoader.vue';
-import { useLoaderStore } from './stores/loader';
-import { mapState } from 'pinia';
-
-export default defineComponent({
-  name: 'App',
-  computed: {
-    ...mapState(useLoaderStore, ['isLoading']),
-  },
-  components: {
-    FullscreenLoader,
-  },
-})
-</script>
-
-<style>
+<style scoped>
 .loader {
   position: fixed;
   top: 0;

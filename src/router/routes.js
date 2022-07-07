@@ -20,10 +20,10 @@ const routes = [
           if (to.params.projectId) {
             let projectStore = useProjectsStore()
             projectStore.activeProjectId = to.params.projectId;
-
+          
             next();
           } else {
-            next('/projects');
+            next('');
           }
         }
       }

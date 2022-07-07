@@ -34,19 +34,22 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useProjectsStore } from 'src/stores/projects';
+import { useLoaderStore } from 'src/stores/loader';
 
 export default {
     name: 'ProjectPage',
     computed: {
         ...mapState(useProjectsStore, ['projects', 'getParserById']),
+        ...mapWritableState(useLoaderStore, ['isLoading']),
     },
     methods: {
         ...mapActions(useProjectsStore, ['editOrCreateProject', 'fetchProjects', 'deleteProject']),
     },
     mounted () {
-        this.fetchProjects();
+      this.fetchProjects();
+      this.isLoading = false;
     },
 }
 </script>

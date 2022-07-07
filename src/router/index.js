@@ -1,4 +1,5 @@
 import { route } from 'quasar/wrappers'
+import { useLoaderStore } from 'src/stores/loader'
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
 import routes from './routes'
 
@@ -25,6 +26,14 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE)
   })
+
+  Router.beforeEach((to, from, next) => {
+    
+    let loader = useLoaderStore();
+    loader.showLoader();
+    //The conditional is false, then send the user to the right place
+    return next();
+  });
 
   return Router
 })

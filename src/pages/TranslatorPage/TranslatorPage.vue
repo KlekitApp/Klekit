@@ -11,18 +11,23 @@ import NothingToTranslate from './components/NothingToTranslate.vue';
 import TranslationEditor from './components/TranslationEditor/TranslationEditor.vue';
 import NoActiveFile from './components/NoActiveFile.vue';
 import { useStructureStore } from 'src/stores/structure';
-import { mapActions, mapState } from 'pinia';
+import { mapActions, mapState, mapWritableState } from 'pinia';
+import { useLoaderStore } from 'src/stores/loader';
 
 export default {
   name: 'IndexPage',
   computed: {
-    ...mapState(useStructureStore, ['isErrorWithList', 'activeFile'])
+    ...mapState(useStructureStore, ['isErrorWithList', 'activeFile']),
+    ...mapWritableState(useLoaderStore, ['isLoading']),
   },
   methods: {
     ...mapActions(useStructureStore, ['fetch', 'reset']),
   },
   mounted() {
-    this.fetch();
+    setTimeout(() => {
+      this.fetch();
+      this.isLoading = false;
+    }, 0);
   },
   unmounted() {
     this.reset();
