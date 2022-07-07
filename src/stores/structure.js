@@ -22,6 +22,24 @@ export const useStructureStore = defineStore('structure', {
             let projectsStore = useProjectsStore();
             return Object.keys(state.dataByFile[state.activeFile]?.[projectsStore.baseLanguage] || {});
         },
+        dataByKeys: state => {
+            let projectsStore = useProjectsStore();
+            let languages = [
+                projectsStore.language,
+                ...projectsStore.sourceLanguages,
+            ]
+            let data = {};
+            state.fileList.forEach(file => {
+                Object.keys(state.dataByFile[file]?.[projectsStore.baseLanguage] || {}).forEach(key => {
+                    languages.forEach(language => {
+                        data[key] = data[key] || {language: {}, file};
+                        data[key].language[language] = state.dataByFile[file]?.[language]?.[key]?.value || '';
+                    });
+                });
+            });
+
+            return data;
+        },
         translatedPercentageByFile: state => {
             let projectsStore = useProjectsStore();
             let result = {};

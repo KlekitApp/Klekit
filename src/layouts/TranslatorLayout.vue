@@ -14,7 +14,7 @@
         <q-toolbar-title>
           {{ project.name || 'Klekit'}}
         </q-toolbar-title>
-
+        <search-by-key/>
         <q-btn
           flat
           label="Back To Projects"
@@ -113,6 +113,7 @@ import { useProjectsStore } from 'src/stores/projects';
 import { mapActions, mapState, mapWritableState } from 'pinia';
 import { useStructureStore } from 'src/stores/structure';
 import { useTranslatorStore } from 'src/stores/translator';
+import SearchByKey from 'src/components/SearchByKey.vue';
 
 export default {
   name: 'TranslatorLayout',
@@ -146,6 +147,9 @@ export default {
     toggleFileKeysDrawer () {
       this.fileKeysDrawerOpen = !this.fileKeysDrawerOpen;
     }
+  },
+  components: {
+    SearchByKey
   }
 }
 </script>
