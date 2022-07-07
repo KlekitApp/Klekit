@@ -1,8 +1,8 @@
 {
-  "name": "ck3-language-editor",
+  "name": "klekit",
   "version": "0.0.1",
   "description": "Editor for Language",
-  "productName": "CK3 Language Editor",
+  "productName": "KLEKIT",
   "author": "Anton Nosenko <nos.anton@gmail.com>",
   "private": true,
   "scripts": {

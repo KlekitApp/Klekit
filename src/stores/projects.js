@@ -15,6 +15,7 @@ export const useProjectsStore = defineStore('projects', {
         baseLanguage: state => state.projects[state.activeProjectId]?.baseLanguage || '',
         helpLanguages: state => state.projects[state.activeProjectId]?.helpLanguages || [],
         pathToApp: state => state.projects[state.activeProjectId]?.pathToApp || '',
+        project: state => state.projects[state.activeProjectId] || {},
         parser: state => state.parsers.find(parser => parser.id === state.projects[state.activeProjectId]?.parser?.id),
         getParserById: state => id => state.parsers.find(parser => parser.id === id),
         sourceLanguages(state) { 

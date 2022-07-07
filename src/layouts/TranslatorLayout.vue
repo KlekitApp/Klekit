@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          CK3 Language Editor
+          {{ project.name || 'Klekit'}}
         </q-toolbar-title>
 
         <q-btn
@@ -126,7 +126,7 @@ export default {
     ...mapWritableState(useStructureStore, ['activeFile']),
     ...mapWritableState(useTranslatorStore, ['activeKey', 'activeValue']),
 
-    ...mapState(useProjectsStore, ['language']),
+    ...mapState(useProjectsStore, ['language', 'project']),
     ...mapState(useStructureStore, ['fileList', 'translatedPercentageByFile', 'activeFileData', 'activeFileDataKeys']),
   },
   methods: {
