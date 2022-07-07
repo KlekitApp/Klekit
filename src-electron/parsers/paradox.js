@@ -131,6 +131,9 @@ export default {
         result.push('');
         result = result.join('\n');
         if (pathToApp && name && language) {
+            if (!fs.existsSync(path.join(pathToApp, '/game/localization/' + language))) {
+                fs.mkdirSync(path.join(pathToApp, '/game/localization/' + language));
+            }
             fs.writeFileSync(path.join(pathToApp, '/game/localization/' + language + '/' + name + '_l_' + language + '.yml'), result);
         }
         return result;
