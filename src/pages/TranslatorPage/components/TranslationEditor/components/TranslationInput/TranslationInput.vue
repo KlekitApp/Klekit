@@ -14,7 +14,7 @@
             <p class="text-white">Actions:</p>
             <q-btn
                 unelevated
-                color="green"
+                color="primary"
                 class="full-width"
                 @click="saveTranslation" 
             > Save </q-btn>
