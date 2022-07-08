@@ -1,5 +1,5 @@
 <template>
-    <q-list separator class="absolute-full">
+    <q-list separator class="source-list vertical-top">
         <q-item v-for="(language, index) in sourceLanguages" :key="index">
             <q-item-section>
                 <q-item-label class="text-h6">{{activeFileData[language]?.[activeKey]?.value || 'NO VALUE FOR THIS LANGUAGE'}}</q-item-label>
@@ -24,3 +24,9 @@ export default {
     },
 }
 </script>
+
+<style scoped>
+.source-list {
+    width: 100%;
+}
+</style>

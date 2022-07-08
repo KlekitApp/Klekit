@@ -1,6 +1,8 @@
 <template>
-    <no-active-key v-if="!activeKey && translatedPercentageByFile[activeFile]<100" />
-    <all-translated v-if="!activeKey && translatedPercentageByFile[activeFile] === 100" />
+    <div class="absolute-full flex flex-center">
+        <no-active-key v-if="!activeKey && translatedPercentageByFile[activeFile]<100" />
+        <all-translated v-if="!activeKey && translatedPercentageByFile[activeFile] === 100" />
+    </div>
     <SourceList v-if="activeKey" />
     <q-footer bordered class="bg-white text-black" v-if="activeKey">
         <TranslationInput />

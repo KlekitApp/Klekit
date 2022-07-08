@@ -1,8 +1,10 @@
 <template>
-  <q-page class="flex flex-center">
-    <nothing-to-translate v-if="isErrorWithList" />
-    <translation-editor v-else-if="activeFile"></translation-editor>
-    <no-active-file v-else />
+  <q-page>
+    <div class="absolute-full flex flex-center">
+      <nothing-to-translate v-if="isErrorWithList" />
+      <no-active-file v-else-if="!activeFile" />
+    </div>
+    <translation-editor v-if="activeFile && !isErrorWithList"></translation-editor>
   </q-page>
 </template>
 
