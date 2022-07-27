@@ -11,6 +11,7 @@ export const useProjectsStore = defineStore('projects', {
         editedProject: {},
     }),
     getters: {
+        autotranslation: state => state.projects[state.activeProjectId]?.autotranslation || {},
         language: state => state.projects[state.activeProjectId]?.language || '',
         baseLanguage: state => state.projects[state.activeProjectId]?.baseLanguage || '',
         helpLanguages: state => state.projects[state.activeProjectId]?.helpLanguages || [],
@@ -35,7 +36,10 @@ export const useProjectsStore = defineStore('projects', {
                 this.editedProject = toRaw(this.projects[projectId]);
             } else {
                 this.editedProject = {
-                    id: uuidv4()
+                    id: uuidv4(),
+                    autotranslation: {
+                        active: false,
+                    }
                 };
             }
             this.isDialogOpen = true;

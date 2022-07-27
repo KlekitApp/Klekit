@@ -19,6 +19,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
+import TranslateApi from 'translate';
 
 import ParadoxParser from './parsers/paradox';
 
@@ -100,5 +101,10 @@ contextBridge.exposeInMainWorld('api', {
         let pathToProjects = await ipcRenderer.invoke('getPath') + '/Klekit/projects';
         let pathToFile = path.join(pathToProjects, id + '.json');
         fs.unlinkSync(pathToFile);
+    },
+
+    async translate({text, from, to, engine, key}) {
+        return TranslateApi(text, { from, to, engine, key });
     }
+
 })
