@@ -1,5 +1,6 @@
 <template>
     <q-input
+        ref="input"
         :modelValue="activeValue"
         @update:modelValue="inputActiveValue"
         debounce="200"
@@ -10,6 +11,7 @@
         autogrow
         :label="activeKey"
         @keydown.tab.prevent="setTranslationAsActive"
+        @keydown.enter.shift.exact.prevent="saveTranslation"
         type="textarea"></q-input>
 </template>
 
@@ -33,14 +35,14 @@ export default {
         ...mapWritableState(useTranslatorStore, ['activeValue'])
     },
     methods: {
-        ...mapActions(useTranslatorStore, ['setCurrentStructure']),
+        ...mapActions(useTranslatorStore, ['setCurrentStructure', 'saveTranslation']),
         inputActiveValue (value) {
             this.activeValue = value;
             this.setCurrentStructure();
         },
         setTranslationAsActive () {
             if (this.activeValue === '' && this.placeholder !== 'Translating...') {
-                this.activeValue = this.placeholder;
+                this.inputActiveValue(this.placeholder);
             }
         },
         async translateText (value) {
@@ -53,12 +55,19 @@ export default {
                     text: this.activeFileData[this.autotranslation.language][value].value
                 })) || '';
             }
+        },
+        focuseOnInput () {
+            this.$refs.input.focus();
         }
+    },
+    mounted () {
+        this.translateText(this.activeKey);
     },
     watch: {
         activeKey (value) {
             setTimeout(() => {
                 this.translateText(value);
+                this.focuseOnInput();
             }, 0);
         }
     }
